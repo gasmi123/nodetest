@@ -26,6 +26,11 @@ db.connect(err => {
     console.log('Connected to database.');
 });
 
+// Hello Endpoint
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
+});
+
 // Login Endpoint
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
