@@ -9,22 +9,45 @@ const port = 3000 || process.env.PORT;
 // Middleware
 app.use(bodyParser.json());
 
-// MySQL connection setup
-const db = mysql.createConnection({
-    host: 'sql12.freesqldatabase.com',
-    user: 'sql12774456',
-    password: 'xWJYzuc1IL',
-    database: 'sql12774456'
-});
+// // MySQL connection setup
+// const db = mysql.createConnection({
+//     host: 'sql12.freesqldatabase.com',
+//     user: 'sql12774456',
+//     password: 'xWJYzuc1IL',
+//     database: 'sql12774456'
+// });
 
-// Connect to DB
-db.connect(err => {
-    if (err) {
-        console.error('Database connection failed: ' + err.stack);
-        return;
-    }
-    console.log('Connected to database.');
-});
+
+// Create a connection pool
+const pool = mysql.createPool({
+    host: 'sql12.freesqldatabase.com',     // change to your DB host
+    user: 'sql12774456',     // change to your DB user
+    password: 'xWJYzuc1IL', // change to your DB password
+    database: 'sql12774456',   // change to your DB name
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+  });
+
+// // Connect to DB
+// db.connect(err => {
+//     if (err) {
+//         console.error('Database connection failed: ' + err.stack);
+//         return;
+//     }
+//     console.log('Connected to database.');
+// });
+
+// Example route that queries the database
+app.get('/users', (req, res) => {
+    pool.query('SELECT * FROM users', (err, results) => {
+      if (err) {
+        console.error('Error querying the database:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.json(results);
+    });
+  });
 
 // Hello Endpoint
 app.get('/', (req, res) => {
